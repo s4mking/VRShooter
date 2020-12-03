@@ -8,7 +8,6 @@
   <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
   <script src="//cdn.rawgit.com/donmccurdy/aframe-extras/v3.13.1/dist/aframe-extras.min.js"></script>
   <script src="vendor/aframe-bmfont-component.min.js"></script>
-  <script src="assets/data/waves.js"></script>
   <link rel="stylesheet" href="css/main.css">
   <link rel="icon" href="assets/images/favicon.ico">
   <script>
@@ -59,11 +58,8 @@
   <a-scene stats physics="debug:true;" sound="src: url(assets/sounds/cyber.mp3); loop:true; autoplay:true; volume:0.2;">
     <a-assets>
       <a-entity id="mouseCursor" cursor="rayOrigin: mouse" raycaster="objects: .clickable"></a-entity>
-      <a-asset-item id="robot" src="assets/models/weapon.json"></a-asset-item>
-      <a-asset-item id="playerBullet" src="assets/models/shoot.json"></a-asset-item>
       <img id="skyTexture" src="assets/images/sky.png">
       <img id="groundTexture" src="assets/images/ground.jpg">
-      <a-asset-item id="imp" src="assets/models/imp/scene.gltf"></a-asset-item>
       <a-asset-item id="weapon-obj" src="assets/models/weapon.obj"></a-asset-item>
       <a-asset-item id="tie-obj" src="assets/models/tie.obj"></a-asset-item>
       <a-asset-item id="tie-obj" src="assets/models/tie.obj"></a-asset-item>

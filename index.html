@@ -60,12 +60,9 @@
       <a-entity id="mouseCursor" cursor="rayOrigin: mouse" raycaster="objects: .clickable"></a-entity>
       <img id="skyTexture" src="assets/images/sky.png">
       <img id="groundTexture" src="assets/images/ground.jpg">
-      <a-asset-item id="weapon-obj" src="assets/models/weapon.obj"></a-asset-item>
       <a-asset-item id="tie-obj" src="assets/models/tie.obj"></a-asset-item>
       <a-asset-item id="tie-obj" src="assets/models/tie.obj"></a-asset-item>
-      <a-asset-item id="deathstar" src="assets/models/deathstar/scene.gltf"></a-asset-item>
       <a-asset-item id="moon" src="assets/models/moon/scene.gltf"></a-asset-item>
-      <a-asset-item id="weapon-mtl" src="assets/models/weapon.mtl"></a-asset-item>
       <img id="boxTexture" src="https://i.imgur.com/mYmmbrp.jpg">
       <audio id="music" src="assets/sounds/cyber.mp3" crossorigin="anonymous"></audio>
     </a-assets>
@@ -76,7 +73,6 @@
 
     <a-entity camera look-controls position="0 1.5 0">
       <a-text id="score" value="Score" position="-0.2 -0.7 -1" color="white" width="5" anchor="left"></a-text>
-      <a-entity position="7.3 -6.7 -5.3" obj-model="obj: #weapon-obj; mtl: #weapon-mtl" rotation="0 290 0"></a-entity>
       <a-entity rotation="-90 0 0" position="0 0 -4" id='weapon' static-body="shape:sphere; sphereRadius: 0.3;">
       </a-entity>
     </a-entity>
@@ -87,9 +83,7 @@
       </a-entity>
     </a-entity>
 
-    <a-entity position="0.5 2 -3.5" gltf-model="#deathstar" scale="0.001 0.001 0.001"
-      sound="src: url(assets/sounds/hammer.mp3); autoplay: true; loop:true; volume:0.05;" animation-mixer>
-    </a-entity>
+
 
 
     <a-entity gltf-model="#moon" position="0 50 60"></a-entity>
