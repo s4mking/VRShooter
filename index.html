@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <title>Shoot Me</title>
   <meta name="theme-color" content="#3d4d55">
+  <script src="js/random.js"></script>
   <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
   <script src="//cdn.rawgit.com/donmccurdy/aframe-extras/v3.13.1/dist/aframe-extras.min.js"></script>
   <script src="vendor/aframe-bmfont-component.min.js"></script>
@@ -14,43 +15,56 @@
     $ = (sel) => document.querySelector(sel)
     $$ = (sel) => document.querySelectorAll(sel)
     on = (elem, type, hand) => elem.addEventListener(type, hand)
-    AFRAME.registerComponent('over-listener', {
+
+    AFRAME.registerComponent('distribute', {
       schema: {
-        mouseover: {
-          type: 'boolean',
-          default: false
+        src: {
+          type: 'string'
+        },
+        jitter: {
+          type: 'vec3'
+        },
+        centerOffset: {
+          type: 'vec3'
+        },
+        radius: {
+          type: 'number'
         }
       },
       init: function () {
-
-        var el = this.el; // reference to the entity that contains this component    
-        var data = this.data; // reference to the properties of this component.    
-        // Listen for mouseenter event
-        this.el.addEventListener('mouseenter', function (evt) {
-          // You can't change the property directly. You must use setAttribute.
-          el.setAttribute('over-listener', 'mouseover',
-            true); // this.el fail, due to scope of the function. Must use this reference.
-          // Change the color of the button to indicate rollover state is on.
-          el.setAttribute('material', 'color', '#55ee00');;
-        });
-        // Listen for mouseleave event
-        this.el.addEventListener('mouseleave', function (evt) {
-          el.setAttribute('over-listener', 'mouseover', false);
-          el.setAttribute('material', 'color', 'orange');
-        });
-      },
-      tick: function () { // called every frame       
-        if (this.data.mouseover) { // Check the mouseover state
-          let elOcta = document.querySelector('#octahedron');
-          let rot = elOcta.getAttribute('rotation');
-          elOcta.setAttribute('rotation', {
-            x: rot.x,
-            y: rot.y,
-            z: rot.z + 1
-          });
+        const rg = new Random(Random.engines.mt19937().seed(10))
+        const center = new THREE.Vector3(this.data.centerOffset.x,
+          this.data.centerOffset.y, this.data.centerOffset.z)
+        const jx = this.data.jitter.x
+        const jy = this.data.jitter.y
+        const jz = this.data.jitter.z
+        if ($(this.data.src).hasLoaded) {
+          const s = this.data.radius
+          for (let i = -s; i < s; i++) {
+            for (let j = -s; j < s; j++) {
+              const el = document.createElement('a-entity')
+              el.setAttribute('gltf-model', this.data.src)
+              const offset = new THREE.Vector3(i * s + rg.real(-jx, jx),
+                rg.real(-jy, jy),
+                j * s - rg.real(-jz, jz));
+              el.setAttribute('position', center.clone().add(offset));
+              el.setAttribute('rotation', {
+                x: 0,
+                y: rg.real(-95, 15) * Math.PI / 180,
+                z: 0
+              })
+              const scale = rg.real(0.5, 1.5)
+              el.setAttribute('scale', {
+                x: scale,
+                y: scale,
+                z: scale
+              })
+              $('a-scene').appendChild(el)
+            }
+          }
         }
       }
-    });
+    })
   </script>
 </head>
 
@@ -60,9 +74,13 @@
       <a-entity id="mouseCursor" cursor="rayOrigin: mouse" raycaster="objects: .clickable"></a-entity>
       <img id="skyTexture" src="assets/images/sky.png">
       <img id="groundTexture" src="assets/images/ground.jpg">
+      <a-asset-item id="weapon-obj" src="assets/models/weapon.obj"></a-asset-item>
       <a-asset-item id="tie-obj" src="assets/models/tie.obj"></a-asset-item>
       <a-asset-item id="tie-obj" src="assets/models/tie.obj"></a-asset-item>
+      <a-asset-item id="deathstar" src="assets/models/deathstar/scene.gltf"></a-asset-item>
       <a-asset-item id="moon" src="assets/models/moon/scene.gltf"></a-asset-item>
+      <a-asset-item id="rock1" src="assets/models/rock1/scene.gltf"></a-asset-item>
+      <a-asset-item id="weapon-mtl" src="assets/models/weapon.mtl"></a-asset-item>
       <img id="boxTexture" src="https://i.imgur.com/mYmmbrp.jpg">
       <audio id="music" src="assets/sounds/cyber.mp3" crossorigin="anonymous"></audio>
     </a-assets>
@@ -73,22 +91,25 @@
 
     <a-entity camera look-controls position="0 1.5 0">
       <a-text id="score" value="Score" position="-0.2 -0.7 -1" color="white" width="5" anchor="left"></a-text>
+      <a-entity id="weapon2" position="7.3 -6.7 -5.3" obj-model="obj: #weapon-obj; mtl: #weapon-mtl" rotation="0 290 0">
+      </a-entity>
       <a-entity rotation="-90 0 0" position="0 0 -4" id='weapon' static-body="shape:sphere; sphereRadius: 0.3;">
       </a-entity>
     </a-entity>
 
     <a-entity id='tie' position="0.5 2 -3.5" dynamic-body>
-      <a-entity id='tie-model' obj-model="obj: #tie-obj; mtl: #tie-mtl" scale="0.3 0.3 0.3"
+      <a-entity material="color: grey" id='tie-model' obj-model="obj: #tie-obj; mtl: #tie-mtl" scale="0.3 0.3 0.3"
         sound="src: url(assets/sounds/explo.mp3); autoplay: false; loop: false; volume:0.5;">
       </a-entity>
     </a-entity>
 
+    <a-entity position="0.5 2 -3.5" gltf-model="#deathstar" scale="0.001 0.001 0.001"
+      sound="src: url(assets/sounds/hammer.mp3); autoplay: true; loop:true; volume:0.05;" animation-mixer>
+    </a-entity>
 
-
-
+    <a-entity distribute="jitter: 250 12.5 20; modelCenter: 59 20 32; src:#rock1; radius:3"></a-entity>
     <a-entity gltf-model="#moon" position="0 50 60"></a-entity>
     <a-sky rotation="0 310 0" src="#skyTexture"></a-sky>
-    <!-- <a-plane src="#groundTexture" rotation="-90 0 0" width="30" height="30" repeat="10 10"></a-plane> -->
 
     <a-plane src="#groundTexture" static-body rotation="-90 0 0" width="100" height="100" shadow="receive:true">
     </a-plane>
@@ -99,6 +120,8 @@
     let resetId = 0
     const resetTie = () => {
       clearTimeout(resetId)
+      let coor1 = Math.floor(Math.random() * 20);
+      let coor2 = Math.floor(Math.random() * 2);
       $("#tie").body.position.set(0.5, 2, -3.5)
       $("#tie").body.velocity.set(0, 5, 0)
       $("#tie").body.angularVelocity.set(0, 0, 0)
@@ -108,6 +131,8 @@
 
     on($("#weapon"), 'collide', (e) => {
       const tie = $("#tie")
+      console.log(e.detail.body.id)
+      console.log(tie.body.id)
       if (e.detail.body.id === tie.body.id && !hit) {
         hit = true
         score = score + 1

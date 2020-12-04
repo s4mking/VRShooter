@@ -19,18 +19,10 @@ A WebVR FPS mini-game demo using [A-Frame](http://aframe.io) by [Mozilla VR](htt
 ## Local Development
 
 ```bash
-git clone git@github.com:aframevr/a-blast && cd a-blast
+git clone https://github.com/s4mking/VRShooter.git && cd a-blast
 npm install
 npm start
 ```
 
 Then, load [`http://localhost:8080`](http://localhost:8080) in your browser.
 
-We are opened to new ideas and contributions, feel free to send a pull request with your A-Blast improvements.
-
-<p align="center">
-  <img src="assets/readme/gun.png" alt="Laser Gun">
-</p>
-
-
-Soundtrack by José Manuel Pérez Paredes AKA [JosSs](https://soundcloud.com/josss-1/tracks)
